@@ -20,157 +20,152 @@
  *  Creative Commons Attribution-NonCommercial 4.0 International License.
  */
 
-#include "F1sh.h"
+ #include "F1sh.h"
 
 
-F1sh.h::initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel) {
-    WiFi.setHostname(hostname);
-    WiFi.encryptionType(WIFI_AUTH_WPA2_PSK);
-    WiFi.begin(ssid, password);
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP(ssid,password,(channel >= 1) && (channel <= 13) ? channel : int(random(1, 13)));
-    Serial.print("IP address: ");
-    Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
-}
-
-F1sh.h::initWiFiSmart() {
-    WiFi.mode(WIFI_STA);
-    WiFi.beginSmartConfig();
-    //Wait for SmartConfig packet from mobile
-    Serial.println("Waiting for SmartConfig.");
-    while (!WiFi.smartConfigDone()) {
-        delay(500);
-        Serial.print(".");
-    }
-    Serial.println("");
-    Serial.println("SmartConfig received.");
-    //Wait for WiFi to connect to AP
-    Serial.println("Waiting for WiFi");
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-    }
-    Serial.println("WiFi Connected.");
-    Serial.print("IP address: ");
-    Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
-}
-
-F1sh.h::initWebServer() {
-    ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
-      (void)len;
-  
-      if (type == WS_EVT_CONNECT) {
-        ws.textAll("new client connected");
-        Serial.println("ws connect");
-        client->setCloseClientOnQueueFull(false);
-        client->ping();
-  
-      } else if (type == WS_EVT_DISCONNECT) {
-        ws.textAll("client disconnected");
-        Serial.println("ws disconnect");
-  
-      } else if (type == WS_EVT_ERROR) {
-        Serial.println("ws error");
-  
-      } else if (type == WS_EVT_PONG) {
-        Serial.println("ws pong");
-  
-      } else if (type == WS_EVT_DATA) {
-        AwsFrameInfo *info = (AwsFrameInfo *)arg;
-        // Serial.printf("index: %" PRIu64 ", len: %" PRIu64 ", final: %" PRIu8 ", opcode: %" PRIu8 "\n", info->index, info->len, info->final, info->opcode);
-        // String msg = "";
-        if (info->final && info->index == 0 && info->len == len) {
-          if (info->opcode == WS_TEXT) {
-            data[len] = 0;
-            Serial.printf("ws text: %s\n", (char *)data);
-  
-            // Parse the JSON message
-            JsonDocument doc;
-            DeserializationError error = deserializeJson(doc, data);
-            if (error) {
-              Serial.print(F("deserializeJson() failed: "));
-              Serial.println(error.f_str());
-              return;
-            }
-  
-            // Extract data
-            if (!doc["action"].isNull()) {
-              const char* action = doc["action"];
-              Serial.println(action);
-              if (doc["action"] == "motor")
-              {
-                const int c1 = doc["c1"].is<int>() ? doc["c1"].as<int>() : -1;
-                const int c2 = doc["c2"].is<int>() ? doc["c2"].as<int>() : -1;
-                const int c3 = doc["c3"].is<int>() ? doc["c3"].as<int>() : -1;
-                const int c4 = doc["c4"].is<int>() ? doc["c3"].as<int>() : -1;
-                const int c5 = doc["c5"].is<int>() ? doc["c5"].as<int>() : -1;
-                const int c6 = doc["c6"].is<int>() ? doc["c6"].as<int>() : -1;
-                const int c7 = doc["c7"].is<int>() ? doc["c7"].as<int>() : -1;
-                const int c8 = doc["c8"].is<int>() ? doc["c8"].as<int>() : -1;
-                if (motorCallback) {
-                  motorCallback(c1, c2, c3, c4, c5, c6, c7, c8);
-                }
-              }
-              if (doc["action"] == "servo")
-              {
-                const int s1 = doc["s1"].is<int>() ? doc["s1"].as<int>() : -1;
-                const int s2 = doc["s2"].is<int>() ? doc["s2"].as<int>() : -1;
-                const int s3 = doc["s3"].is<int>() ? doc["s3"].as<int>() : -1;
-                const int s4 = doc["s4"].is<int>() ? doc["s4"].as<int>() : -1;
-                const int s5 = doc["s5"].is<int>() ? doc["s5"].as<int>() : -1;
-                const int s6 = doc["s6"].is<int>() ? doc["s6"].as<int>() : -1;
-                Serial.printf("s1: %d  s2: %d  s3: %d  s4: %d  s5: %d  s6: %d\n",s1,s2,s3,s4,s5,s6);
-                if (servoCallback) {
-                  servoCallback(s1, s2, s3, s4, s5, s6);
-                }
-              }
-              if (doc["action"] == "reboot") {
-                ESP.restart();
-              }
-              if (doc["action"] == "get") {
-                // send available data
-                JsonDocument res;
-                res["action"] = "get";
-                res["data"] = "ok";
-                ws.text(client->id(), res.as<String>());
-              }
-            }
-          }
-        }
-      }
-    });
-    server.rewrite("/config", "/index.html");
-    server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
-    server.addHandler(&ws);
-    server.begin();
-}
-
-F1sh.h::setGamepadCallback(GamepadCallback callback) {
-    gamepadCallback = callback;
-}
-
-F1sh.h::F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel) {
-    Serial.println("Starting F1sh as an Access Point");
-  #ifdef ESP32
-    LittleFS.begin(true);
-  #else
-    LittleFS.begin();
-  #endif
-    initWiFiAP(ssid,password,hostname,channel);
-    initWebServer();
-}
-
-F1sh.h::F1shInitSmartAP(){
-    Serial.println("Starting F1sh in SmartConfig mode");
-  #ifdef ESP32
-      LittleFS.begin(true);
-  #else
-      LittleFS.begin();
-  #endif
-      initWiFiSmart();
-      initWebServer();
-}
-
-F1sh.h::F1shLoop() {
-    ws.cleanupClients();
-}
+ void F1sh::initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel) {
+     WiFi.setHostname(hostname);
+     WiFi.encryptionType(WIFI_AUTH_WPA2_PSK);
+     WiFi.begin(ssid, password);
+     WiFi.mode(WIFI_AP);
+     WiFi.softAP(ssid,password,(channel >= 1) && (channel <= 13) ? channel : int(random(1, 13)));
+     Serial.print("IP address: ");
+     Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
+ }
+ 
+ void F1sh::initWiFiSmart() {
+     WiFi.mode(WIFI_STA);
+     WiFi.beginSmartConfig();
+     //Wait for SmartConfig packet from mobile
+     Serial.println("Waiting for SmartConfig.");
+     while (!WiFi.smartConfigDone()) {
+         delay(500);
+         Serial.print(".");
+     }
+     Serial.println("");
+     Serial.println("SmartConfig received.");
+     //Wait for WiFi to connect to AP
+     Serial.println("Waiting for WiFi");
+     while (WiFi.status() != WL_CONNECTED) {
+         delay(500);
+         Serial.print(".");
+     }
+     Serial.println("WiFi Connected.");
+     Serial.print("IP address: ");
+     Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
+ }
+ 
+ void F1sh::initWebServer() {
+     ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
+       (void)len;
+   
+       if (type == WS_EVT_CONNECT) {
+         ws.textAll("new client connected");
+         Serial.println("ws connect");
+         client->setCloseClientOnQueueFull(false);
+         client->ping();
+   
+       } else if (type == WS_EVT_DISCONNECT) {
+         ws.textAll("client disconnected");
+         Serial.println("ws disconnect");
+   
+       } else if (type == WS_EVT_ERROR) {
+         Serial.println("ws error");
+   
+       } else if (type == WS_EVT_PONG) {
+         Serial.println("ws pong");
+   
+       } else if (type == WS_EVT_DATA) {
+         AwsFrameInfo *info = (AwsFrameInfo *)arg;
+         // Serial.printf("index: %" PRIu64 ", len: %" PRIu64 ", final: %" PRIu8 ", opcode: %" PRIu8 "\n", info->index, info->len, info->final, info->opcode);
+         // String msg = "";
+         if (info->final && info->index == 0 && info->len == len) {
+           if (info->opcode == WS_TEXT) {
+             data[len] = 0;
+             Serial.printf("ws text: %s\n", (char *)data);
+   
+             // Parse the JSON message
+             JsonDocument doc;
+             DeserializationError error = deserializeJson(doc, data);
+             if (error) {
+               Serial.print(F("deserializeJson() failed: "));
+               Serial.println(error.f_str());
+               return;
+             }
+   
+             // Extract data
+             if (!doc["action"].isNull()) {
+               const char* action = doc["action"];
+               Serial.println(action);
+               if (doc["action"] == "motor")
+               {
+                 const int c1 = doc["c1"].is<int>() ? doc["c1"].as<int>() : -1;
+                 const int c2 = doc["c2"].is<int>() ? doc["c2"].as<int>() : -1;
+                 const int c3 = doc["c3"].is<int>() ? doc["c3"].as<int>() : -1;
+                 const int c4 = doc["c4"].is<int>() ? doc["c3"].as<int>() : -1;
+                 const int c5 = doc["c5"].is<int>() ? doc["c5"].as<int>() : -1;
+                 const int c6 = doc["c6"].is<int>() ? doc["c6"].as<int>() : -1;
+                 const int c7 = doc["c7"].is<int>() ? doc["c7"].as<int>() : -1;
+                 const int c8 = doc["c8"].is<int>() ? doc["c8"].as<int>() : -1;
+               }
+               if (doc["action"] == "servo")
+               {
+                 const int s1 = doc["s1"].is<int>() ? doc["s1"].as<int>() : -1;
+                 const int s2 = doc["s2"].is<int>() ? doc["s2"].as<int>() : -1;
+                 const int s3 = doc["s3"].is<int>() ? doc["s3"].as<int>() : -1;
+                 const int s4 = doc["s4"].is<int>() ? doc["s4"].as<int>() : -1;
+                 const int s5 = doc["s5"].is<int>() ? doc["s5"].as<int>() : -1;
+                 const int s6 = doc["s6"].is<int>() ? doc["s6"].as<int>() : -1;
+                 Serial.printf("s1: %d  s2: %d  s3: %d  s4: %d  s5: %d  s6: %d\n",s1,s2,s3,s4,s5,s6);
+               }
+               if (doc["action"] == "reboot") {
+                 ESP.restart();
+               }
+               if (doc["action"] == "get") {
+                 // send available data
+                 JsonDocument res;
+                 res["action"] = "get";
+                 res["data"] = "ok";
+                 ws.text(client->id(), res.as<String>());
+               }
+             }
+           }
+         }
+       }
+     });
+     server.rewrite("/config", "/index.html");
+     server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
+     server.addHandler(&ws);
+     server.begin();
+ }
+ 
+ void F1sh::setGamepadCallback(GamepadCallback callback) {
+     gamepadCallback = callback;
+ }
+ 
+ void F1sh::F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel) {
+     Serial.println("Starting F1sh as an Access Point");
+   #ifdef ESP32
+     LittleFS.begin(true);
+   #else
+     LittleFS.begin();
+   #endif
+     initWiFiAP(ssid,password,hostname,channel);
+     initWebServer();
+ }
+ 
+ void F1sh::F1shInitSmartAP(){
+     Serial.println("Starting F1sh in SmartConfig mode");
+   #ifdef ESP32
+       LittleFS.begin(true);
+   #else
+       LittleFS.begin();
+   #endif
+       initWiFiSmart();
+       initWebServer();
+ }
+ 
+ void F1sh::F1shLoop() {
+     ws.cleanupClients();
+ }
+ 
