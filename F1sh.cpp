@@ -133,11 +133,17 @@ void F1sh::initWebServer() {
      server.addHandler(&ws);
      server.begin();
 }
- 
+
+/*!
+ *  @brief  Set the callback function for the gamepad
+ */
 void F1sh::setGamepadCallback(GamepadCallback callback) {
      gamepadCallback = callback;
  }
  
+/*!
+ *  @brief  Start F1sh in Access Point mode
+ */
 void F1sh::F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel) {
      Serial.println("Starting F1sh as an Access Point");
    #ifdef ESP32
@@ -149,6 +155,9 @@ void F1sh::F1shInitAP(const char *ssid,const char *password,const char *hostname
     initWebServer();
  }
  
+/*!
+ *  @brief  Start F1sh in SmartConfig mode
+ */
 void F1sh::F1shInitSmartAP(){
      Serial.println("Starting F1sh in SmartConfig mode");
    #ifdef ESP32
@@ -159,7 +168,7 @@ void F1sh::F1shInitSmartAP(){
        initWiFiSmart();
        initWebServer();
  }
- 
+
 void F1sh::F1shLoop() {
      ws.cleanupClients();
  }
