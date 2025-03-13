@@ -20,10 +20,10 @@
  *  Creative Commons Attribution-NonCommercial 4.0 International License.
  */
 
- #include "F1sh.h"
+#include "F1sh.h"
 
 
- void F1sh::initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel) {
+void F1sh::initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel) {
      WiFi.setHostname(hostname);
      WiFi.encryptionType(WIFI_AUTH_WPA2_PSK);
      WiFi.begin(ssid, password);
@@ -33,7 +33,7 @@
      Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
  }
  
- void F1sh::initWiFiSmart() {
+void F1sh::initWiFiSmart() {
      WiFi.mode(WIFI_STA);
      WiFi.beginSmartConfig();
      //Wait for SmartConfig packet from mobile
@@ -55,7 +55,7 @@
      Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
  }
  
- void F1sh::initWebServer() {
+void F1sh::initWebServer() {
      ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
        (void)len;
    
@@ -121,13 +121,13 @@
      server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
      server.addHandler(&ws);
      server.begin();
- }
+}
  
- void F1sh::setGamepadCallback(GamepadCallback callback) {
+void F1sh::setGamepadCallback(GamepadCallback callback) {
      gamepadCallback = callback;
  }
  
- void F1sh::F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel) {
+void F1sh::F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel) {
      Serial.println("Starting F1sh as an Access Point");
    #ifdef ESP32
      LittleFS.begin(true);
@@ -138,7 +138,7 @@
      initWebServer();
  }
  
- void F1sh::F1shInitSmartAP(){
+void F1sh::F1shInitSmartAP(){
      Serial.println("Starting F1sh in SmartConfig mode");
    #ifdef ESP32
        LittleFS.begin(true);
@@ -149,7 +149,7 @@
        initWebServer();
  }
  
- void F1sh::F1shLoop() {
+void F1sh::F1shLoop() {
      ws.cleanupClients();
  }
  
