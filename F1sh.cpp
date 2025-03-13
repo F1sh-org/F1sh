@@ -100,6 +100,17 @@ void F1sh::initWebServer() {
                if (doc["action"] == "gamepad")
                {
                  const int gamepad = doc["gamepad"];
+                 for (int i = 0; i < 4; i++) {
+                   for (int j = 0; j < 4; j++) {
+                    F1sh.Gamepad.axis[i][j] = doc["axis"][i][j];
+                   }
+                 }
+                 for (int i = 0; i < 4; i++) {
+                   for (int j = 0; j < 17; j++) {
+                    F1sh.Gamepad.button[i][j] = doc["button"][i][j];
+                   }
+                 }
+                 gamepadCallback(gamepad.axis, gamepad.button);
                  Serial.println(gamepad);
                }
                if (doc["action"] == "reboot") {
@@ -134,8 +145,8 @@ void F1sh::F1shInitAP(const char *ssid,const char *password,const char *hostname
    #else
      LittleFS.begin();
    #endif
-     initWiFiAP(ssid,password,hostname,channel);
-     initWebServer();
+    initWiFiAP(ssid,password,hostname,channel);
+    initWebServer();
  }
  
 void F1sh::F1shInitSmartAP(){

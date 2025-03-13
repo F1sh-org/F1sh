@@ -40,6 +40,11 @@
      void F1shInitSmartAP();
      void F1shLoop();
      void setGamepadCallback(GamepadCallback callback);
+     struct Gamepad[]
+     {
+        float axis[4][4];
+        float button[4][17];
+     };
      private:
      void initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel);
      void initWiFiSmart();
