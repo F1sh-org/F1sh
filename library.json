@@ -1,0 +1,41 @@
+{
+    "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
+    "name": "F1sh",
+    "version": "1.0.0",
+    "description": "Control a robot using a web interface.",
+    "keywords": [
+        "robot",
+        "web",
+        "interface"
+    ],
+    "repository":
+    {
+    "type": "git",
+    "url": "https://github.com/b4iterdev/F1sh.git"
+    },
+    "authors":
+    {
+    "name": "Nguyen Minh Thai",
+    "email": "thaimeo200389@gmail.com",
+    "url": "https://linktr.ee/b4iterdev"
+    },
+    "license": "CC-BY-NC-4.0",
+    "frameworks": "arduino",
+    "platforms": "espressif32",
+    "headers": "F1sh.h",
+    "dependencies": [
+        {
+            "name": "ESPAsyncWebServer",
+            "version": "^3.7.2"
+        },
+        {
+            "name": "ArduinoJson",
+            "version": "~7.3.1"
+        },
+        {
+            "name": "AsyncTCP",
+            "version": "*",
+            "platforms": ["espressif32"]
+        }
+    ]
+  }
