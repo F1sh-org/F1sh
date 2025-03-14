@@ -48,7 +48,7 @@
         float axis[4];
         float button[17];
      };
-     static Gamepad gamepad[4];
+     Gamepad gamepad[4];
      private:
      void initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel);
      void initWiFiSmart();
