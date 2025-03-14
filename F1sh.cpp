@@ -98,10 +98,12 @@ void F1sh::initWebServer() {
                if (doc["action"] == "gamepad")
                {
                  const String gamepadRead = doc["gamepad"];
-                 for (int i = 0; i <= 4; i++) {
-                  F1sh::gamepad[0].axis[i] = doc["gamepad"][0]["axes"][i];
-                 }
-                 Serial.printf("%f %f %f %f\n",F1sh::gamepad[0].axis[0],F1sh::gamepad[0].axis[1],F1sh::gamepad[0].axis[2],F1sh::gamepad[0].axis[3]);
+                 for (uint16_t i = 0; i < doc["gamepad"].size(); i++) {
+                    for (uint16_t j = 0; j < doc["gamepad"][i]["axes"].size(); j++) {
+                      F1sh::gamepad[i].axis[j] = doc["gamepad"][i]["axes"][j];
+                    }
+                    Serial.printf("Gamepad %d: %f %f %f %f\n",i,F1sh::gamepad[i].axis[0],F1sh::gamepad[i].axis[1],F1sh::gamepad[i].axis[2],F1sh::gamepad[i].axis[3]);
+                }
                }
                if (doc["action"] == "reboot") {
                  ESP.restart();
