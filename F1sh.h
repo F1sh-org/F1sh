@@ -10,7 +10,7 @@
  *  Created by B4iter (@b4iterdev).
  *  Stemist Club logo and all associated assets are property of Stemist Club. All rights reserved.
  *  For more infomation on F1sh, please visit: https://github.com/b4iterdev/F1sh.git
- *
+ *  All text above must be included in any redistribution.
  */
 
  #ifndef _F1sh_H

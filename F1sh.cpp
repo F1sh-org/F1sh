@@ -18,6 +18,7 @@
  *  @section license License
  *
  *  Creative Commons Attribution-NonCommercial 4.0 International License.
+ *  All text above must be included in any redistribution.
  */
 
 #include "F1sh.h"
