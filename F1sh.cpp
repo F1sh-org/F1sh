@@ -119,7 +119,8 @@ void F1sh::initWebServer() {
        }
      });
      server.rewrite("/config", "/index.html");
-     server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
+     server.rewrite("/controller","/index.html");
+     server.serveStatic("/", LittleFS, "/browser").setDefaultFile("index.html");
      server.addHandler(&ws);
      server.begin();
 }
