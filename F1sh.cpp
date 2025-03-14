@@ -98,7 +98,6 @@ void F1sh::initWebServer() {
              if (!doc["action"].isNull()) {
                if (doc["action"] == "gamepad")
                {
-                 const String gamepadRead = doc["gamepad"];
                  // Bind gamepad axes to the gamepad object
                  for (size_t i = 0; i < doc["gamepad"].size(); i++) {
                     for (size_t j = 0; j < doc["gamepad"][i]["axes"].size(); j++) {
