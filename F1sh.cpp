@@ -56,7 +56,7 @@ void F1sh::initWiFiSmart() {
  }
  
 void F1sh::initWebServer() {
-     ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
+     ws.onEvent([this](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
        (void)len;
    
        if (type == WS_EVT_CONNECT) {
@@ -82,7 +82,7 @@ void F1sh::initWebServer() {
          if (info->final && info->index == 0 && info->len == len) {
            if (info->opcode == WS_TEXT) {
              data[len] = 0;
-             Serial.printf("ws text: %s\n", (char *)data);
+             //Serial.printf("ws text: %s\n", (char *)data);
    
              // Parse the JSON message
              JsonDocument doc;
@@ -95,23 +95,13 @@ void F1sh::initWebServer() {
    
              // Extract data
              if (!doc["action"].isNull()) {
-               const char* action = doc["action"];
-               Serial.println(action);
                if (doc["action"] == "gamepad")
                {
-                 const int gamepad = doc["gamepad"];
-                 for (int i = 0; i < 4; i++) {
-                   for (int j = 0; j < 4; j++) {
-                    F1sh.Gamepad.axis[i][j] = doc["axis"][i][j];
-                   }
+                 const String gamepadRead = doc["gamepad"];
+                 for (int i = 0; i <= 4; i++) {
+                  F1sh::gamepad[0].axis[i] = doc["gamepad"][0]["axes"][i];
                  }
-                 for (int i = 0; i < 4; i++) {
-                   for (int j = 0; j < 17; j++) {
-                    F1sh.Gamepad.button[i][j] = doc["button"][i][j];
-                   }
-                 }
-                 gamepadCallback(gamepad.axis, gamepad.button);
-                 Serial.println(gamepad);
+                 Serial.printf("%f %f %f %f\n",F1sh::gamepad[0].axis[0],F1sh::gamepad[0].axis[1],F1sh::gamepad[0].axis[2],F1sh::gamepad[0].axis[3]);
                }
                if (doc["action"] == "reboot") {
                  ESP.restart();

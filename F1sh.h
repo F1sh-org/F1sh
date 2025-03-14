@@ -36,15 +36,18 @@
   */
  class F1sh {
      public:
+     F1sh() {     // Constructor
+    }
      void F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel);
      void F1shInitSmartAP();
      void F1shLoop();
      void setGamepadCallback(GamepadCallback callback);
-     struct Gamepad[]
+     struct Gamepad
      {
-        float axis[4][4];
-        float button[4][17];
+        float axis[4];
+        float button[17];
      };
+     Gamepad gamepad[4];
      private:
      void initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel);
      void initWiFiSmart();
