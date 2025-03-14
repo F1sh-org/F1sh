@@ -100,21 +100,21 @@ void F1sh::initWebServer() {
                {
                  const String gamepadRead = doc["gamepad"];
                  // Bind gamepad axes to the gamepad object
-                 for (uint16_t i = 0; i < doc["gamepad"].size(); i++) {
-                    for (uint16_t j = 0; j < doc["gamepad"][i]["axes"].size(); j++) {
+                 for (size_t i = 0; i < doc["gamepad"].size(); i++) {
+                    for (size_t j = 0; j < doc["gamepad"][i]["axes"].size(); j++) {
                       F1sh::gamepad[i].axis[j] = doc["gamepad"][i]["axes"][j];
                     }
                     Serial.printf("Gamepad %d: %f %f %f %f\n",i,F1sh::gamepad[i].axis[0],F1sh::gamepad[i].axis[1],F1sh::gamepad[i].axis[2],F1sh::gamepad[i].axis[3]);
                 }
                 // Bind gamepad buttons to the gamepad object
-                for (uint16_t i = 0; i < doc["gamepad"].size(); i++) {
-                    for (uint16_t j = 0; j < doc["gamepad"][i]["buttons"].size(); j++) {
+                for (size_t i = 0; i < doc["gamepad"].size(); i++) {
+                    for (size_t j = 0; j < doc["gamepad"][i]["buttons"].size(); j++) {
                       F1sh::gamepad[i].button[j] = doc["gamepad"][i]["buttons"][j];
                     }
                 }
                 if (gamepadCallback)
                 {
-                  for (uint16_t i = 0; i < doc["gamepad"].size(); i++) {
+                  for (size_t i = 0; i < doc["gamepad"].size(); i++) {
                     gamepadCallback(&F1sh::gamepad[i].axis, &F1sh::gamepad[i].button);
                   }
                 }
