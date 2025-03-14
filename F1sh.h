@@ -28,7 +28,7 @@
  static AsyncWebServer server(80);
  static AsyncWebSocket ws("/ws");
  
- typedef void (*GamepadCallback)(int[][4], int[][17]);
+ typedef void (*GamepadCallback)(float[][4], float[][17]);
  static GamepadCallback gamepadCallback = nullptr;
  
  /*!
@@ -37,6 +37,7 @@
  class F1sh {
      public:
      F1sh() {     // Constructor
+
     }
      void F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel);
      void F1shInitSmartAP();
@@ -47,7 +48,7 @@
         float axis[4];
         float button[17];
      };
-     Gamepad gamepad[4];
+     static Gamepad gamepad[4];
      private:
      void initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel);
      void initWiFiSmart();
