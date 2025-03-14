@@ -21,7 +21,7 @@
     },
     "license": "CC-BY-NC-4.0",
     "frameworks": "arduino",
-    "platforms": "espressif32",
+    "platforms": ["espressif32", "espressif8266"],
     "headers": "F1sh.h",
     "dependencies": [
         {
