@@ -28,7 +28,7 @@
  static AsyncWebServer server(80);
  static AsyncWebSocket ws("/ws");
  
- typedef void (*GamepadCallback)(float[][4], float[][17]);
+ typedef void (*GamepadCallback)(const float[][4],const float[][17]);
  static GamepadCallback gamepadCallback = nullptr;
  
  /*!
