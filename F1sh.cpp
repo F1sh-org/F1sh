@@ -91,18 +91,16 @@ void F1sh::initWebServer() {
                {
                  // Bind gamepad axes to the gamepad object
                  for (size_t i = 0; i < doc["gamepad"].size(); i++) {
-                  if (doc["gamepad"][i].containsKey("axes")) {
-                    size_t axesSize = min(doc["gamepad"][i]["axes"].size(), (size_t)4);
-                    memcpy(F1sh::gamepad[i].axis, doc["gamepad"][i]["axes"], sizeof(float) * axesSize);
-                  }
+                    for (size_t j = 0; j < doc["gamepad"][i]["axes"].size(); j++) {
+                      F1sh::gamepad[i].axis[j] = doc["gamepad"][i]["axes"][j];
+                    }
                     Serial.printf("Gamepad %d: %f %f %f %f\n",i,F1sh::gamepad[i].axis[0],F1sh::gamepad[i].axis[1],F1sh::gamepad[i].axis[2],F1sh::gamepad[i].axis[3]);
                 }
                 // Bind gamepad buttons to the gamepad object
                 for (size_t i = 0; i < doc["gamepad"].size(); i++) {
-                  if (doc["gamepad"][i].containsKey("buttons")) {
-                    size_t buttonSize = min(doc["gamepad"][i]["buttons"].size(), (size_t)17);
-                    memcpy(F1sh::gamepad[i].button, doc["gamepad"][i]["buttons"], sizeof(float) * buttonSize);
-                  }
+                    for (size_t j = 0; j < doc["gamepad"][i]["buttons"].size(); j++) {
+                      F1sh::gamepad[i].button[j] = doc["gamepad"][i]["buttons"][j];
+                    }
                 }
                 if (gamepadCallback)
                 {
