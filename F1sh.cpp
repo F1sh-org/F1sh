@@ -66,16 +66,6 @@ void F1sh::initWebServer() {
          client->setCloseClientOnQueueFull(false);
          client->ping();
    
-       } else if (type == WS_EVT_DISCONNECT) {
-         ws.textAll("client disconnected");
-         Serial.println("ws disconnect");
-   
-       } else if (type == WS_EVT_ERROR) {
-         Serial.println("ws error");
-   
-       } else if (type == WS_EVT_PONG) {
-         Serial.println("ws pong");
-   
        } else if (type == WS_EVT_DATA) {
          AwsFrameInfo *info = (AwsFrameInfo *)arg;
          // Serial.printf("index: %" PRIu64 ", len: %" PRIu64 ", final: %" PRIu8 ", opcode: %" PRIu8 "\n", info->index, info->len, info->final, info->opcode);
@@ -95,6 +85,7 @@ void F1sh::initWebServer() {
              }
    
              // Extract data
+             if(!error) {
              if (!doc["action"].isNull()) {
                if (doc["action"] == "gamepad")
                {
@@ -129,6 +120,7 @@ void F1sh::initWebServer() {
                  ws.text(client->id(), res.as<String>());
                }
              }
+            }
            }
          }
        }
