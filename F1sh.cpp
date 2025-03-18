@@ -8,7 +8,7 @@
  *
  *  The library is designed to work with the ESP32 and ESP8266 microcontrollers
  *
- *  For more infomation on F1sh, please visit: https://github.com/stemistclub/F1sh.git
+ *  For more infomation on F1sh, please visit: https://github.com/F1sh-org/F1sh.git
  *
  *
  *  @section author Author
