@@ -28,7 +28,7 @@
  static AsyncWebServer server(80);
  static AsyncWebSocket ws("/ws");
  
- typedef void (*GamepadCallback)(const float[][4],const float[][17]);
+ typedef void (*GamepadCallback)();
  static GamepadCallback gamepadCallback = nullptr;
  
  /*!
@@ -43,6 +43,7 @@
      void F1shInitSmartAP();
      void F1shLoop();
      void setGamepadCallback(GamepadCallback callback);
+     float mapFloat(float x, float in_min, float in_max, float out_min, float out_max);
      struct Gamepad
      {
         float axis[4];

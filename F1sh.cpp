@@ -85,14 +85,14 @@ void F1sh::initWebServer() {
              }
    
              // Extract data
-             if(!error) {
+             if(!doc.isNull() && doc.is<JsonObject>()) {
              if (!doc["action"].isNull()) {
                if (doc["action"] == "gamepad")
                {
                  // Bind gamepad axes to the gamepad object
                  for (size_t i = 0; i < doc["gamepad"].size(); i++) {
                     copyArray(doc["gamepad"][i]["axes"],F1sh::gamepad[i].axis);
-                    Serial.printf("Gamepad %d: %f %f %f %f\n",i,F1sh::gamepad[i].axis[0],F1sh::gamepad[i].axis[1],F1sh::gamepad[i].axis[2],F1sh::gamepad[i].axis[3]);
+                    //Serial.printf("Gamepad %d: %f %f %f %f\n",i,F1sh::gamepad[i].axis[0],F1sh::gamepad[i].axis[1],F1sh::gamepad[i].axis[2],F1sh::gamepad[i].axis[3]);
                 }
                 // Bind gamepad buttons to the gamepad object
                 for (size_t i = 0; i < doc["gamepad"].size(); i++) {
@@ -100,9 +100,7 @@ void F1sh::initWebServer() {
                 }
                 if (gamepadCallback)
                 {
-                  for (size_t i = 0; i < doc["gamepad"].size(); i++) {
-                    gamepadCallback(&F1sh::gamepad[i].axis, &F1sh::gamepad[i].button);
-                  }
+                  gamepadCallback();
                 }
                }
                if (doc["action"] == "reboot") {
@@ -162,6 +160,14 @@ void F1sh::F1shInitSmartAP(){
        initWiFiSmart();
        initWebServer();
  }
+
+/*!
+ *  @brief  map function but used for float instead of Arduino's map function
+ */
+
+float F1sh::mapFloat(float x, float in_min, float in_max, float out_min, float out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 void F1sh::F1shLoop() {
      ws.cleanupClients();
