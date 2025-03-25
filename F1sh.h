@@ -25,7 +25,7 @@
  
  extern PsychicHttpsServer server;
  extern PsychicWebSocketHandler websocketHandler;
- 
+ extern PsychicHttpServer *redirectServer;
  typedef void (*GamepadCallback)();
  static GamepadCallback gamepadCallback = nullptr;
  
@@ -45,7 +45,7 @@
      public:
      F1sh() {     // Constructor
 
-        }
+      }
      void F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel);
      void F1shInitSmartAP();
      void F1shLoop();

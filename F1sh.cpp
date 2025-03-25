@@ -25,7 +25,7 @@
 
 PsychicHttpsServer server;
 PsychicWebSocketHandler websocketHandler;
-
+PsychicHttpServer *redirectServer = new PsychicHttpServer();
 
 void F1sh::initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel) {
      WiFi.setHostname(hostname);
@@ -60,8 +60,13 @@ void F1sh::initWiFiSmart() {
  }
  
 void F1sh::initWebServer() {
-    Serial.println("Webserver are being created");
     server.config.max_uri_handlers = 20;
+    redirectServer->config.ctrl_port = 20420; // just a random port different from the default one
+    redirectServer->listen(80);
+    redirectServer->onNotFound([](PsychicRequest *request) {
+      String url = "https://" + request->host() + request->url();
+      return request->redirect(url.c_str());
+    });
     String cert = LittleFS.open("/server.crt","r",false).readString();
     String key = LittleFS.open("/server.key","r",false).readString();
     server.listen(443,cert.c_str(),key.c_str());
@@ -216,7 +221,4 @@ float F1sh::mapFloat(float x, float in_min, float in_max, float out_min, float o
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void F1sh::F1shLoop() {
-  Serial.println(ESP.getFreeHeap());
-}
  
