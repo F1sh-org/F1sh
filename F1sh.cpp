@@ -23,6 +23,9 @@
 
 #include "F1sh.h"
 
+PsychicHttpsServer server;
+PsychicWebSocketHandler websocketHandler;
+
 
 void F1sh::initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel) {
      WiFi.setHostname(hostname);
@@ -57,16 +60,63 @@ void F1sh::initWiFiSmart() {
  }
  
 void F1sh::initWebServer() {
-     ws.onEvent([this](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
+    Serial.println("Webserver are being created");
+    server.config.max_uri_handlers = 20;
+    String cert = LittleFS.open("/server.crt","r",false).readString();
+    String key = LittleFS.open("/server.key","r",false).readString();
+    server.listen(443,cert.c_str(),key.c_str());
+    websocketHandler.onOpen([](PsychicWebSocketClient *client) {
+      Serial.printf("[socket] connection #%u connected from %s\n", client->socket(), client->remoteIP().toString());
+    });
+    websocketHandler.onClose([](PsychicWebSocketClient *client) {
+      Serial.printf("[socket] connection #%u closed from %s\n", client->socket(), client->remoteIP().toString());
+    });
+    websocketHandler.onFrame([this](PsychicWebSocketRequest *request, httpd_ws_frame *frame) {
+      //Serial.printf("[socket] #%d sent: %s\n", request->client()->socket(), (char *)frame->payload);
+      if(frame->type == HTTPD_WS_TYPE_TEXT) {
+        //Serial.printf("%s",(char *)frame->payload);
+        JsonDocument doc;
+        DeserializationError error = deserializeJson(doc, (char *)frame->payload);
+        if (error) {
+          Serial.print(F("deserializeJson() failed: "));
+          Serial.println(error.f_str());
+          return 0;
+        }
+        // Extract data
+        if(!doc["action"].isNull() && !doc.isNull() && doc.is<JsonObject>()) {
+          if (doc["action"] == "gamepad"){
+            // Bind gamepad axes to the gamepad object
+            for (size_t i = 0; i < doc["gamepad"].size(); i++) {
+              copyArray(doc["gamepad"][i]["axes"],F1sh::gamepad[i].axis);
+              //Serial.printf("Gamepad %d: %f %f %f %f\n",i,F1sh::gamepad[i].axis[0],F1sh::gamepad[i].axis[1],F1sh::gamepad[i].axis[2],F1sh::gamepad[i].axis[3]);
+          }
+          // Bind gamepad buttons to the gamepad object
+          for (size_t i = 0; i < doc["gamepad"].size(); i++) {
+              copyArray(doc["gamepad"][i]["buttons"],F1sh::gamepad[i].button);
+          }
+          if (gamepadCallback)
+          {
+            gamepadCallback();
+          }
+          }
+          if (doc["action"] == "reboot") {
+            ESP.restart();
+          }
+          if (doc["action"] == "get") {
+            // send available data
+            JsonDocument res;
+            res["action"] = "get";
+            res["data"] = "ok";
+            return request->reply(res.as<String>().c_str());
+          }
+        }
+      }
+      return 0;
+  });
+  /*
+    ws.onEvent([this](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
        (void)len;
-   
-       if (type == WS_EVT_CONNECT) {
-         ws.textAll("new client connected");
-         Serial.println("ws connect");
-         client->setCloseClientOnQueueFull(false);
-         client->ping();
-   
-       } else if (type == WS_EVT_DATA) {
+      if (type == WS_EVT_DATA) {
          AwsFrameInfo *info = (AwsFrameInfo *)arg;
          // Serial.printf("index: %" PRIu64 ", len: %" PRIu64 ", final: %" PRIu8 ", opcode: %" PRIu8 "\n", info->index, info->len, info->final, info->opcode);
          // String msg = "";
@@ -119,11 +169,8 @@ void F1sh::initWebServer() {
          }
        }
      });
-     server.rewrite("/config", "/index.html");
-     server.rewrite("/controller","/index.html");
-     server.serveStatic("/", LittleFS, "/browser").setDefaultFile("index.html");
-     server.addHandler(&ws);
-     server.begin();
+     */
+     server.on("/ws", &websocketHandler);
 }
 
 /*!
@@ -170,6 +217,6 @@ float F1sh::mapFloat(float x, float in_min, float in_max, float out_min, float o
 }
 
 void F1sh::F1shLoop() {
-     ws.cleanupClients();
+     //ws.cleanupClients();
  }
  

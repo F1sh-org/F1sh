@@ -17,16 +17,14 @@
  #define _F1sh_H
  
  #include <Arduino.h>
- #include <ESPAsyncWebServer.h>
- #include <AsyncTCP.h>
  #include <WiFi.h>
  #include <LittleFS.h>
- #include "AsyncJson.h"
  #include <ArduinoJson.h>
+ #include <PsychicHttp.h>
+ #include <PsychicHttpsServer.h>
  
- 
- static AsyncWebServer server(80);
- static AsyncWebSocket ws("/ws");
+ extern PsychicHttpsServer server;
+ extern PsychicWebSocketHandler websocketHandler;
  
  typedef void (*GamepadCallback)();
  static GamepadCallback gamepadCallback = nullptr;
