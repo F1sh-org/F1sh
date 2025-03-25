@@ -35,24 +35,24 @@
   *  @brief  Class that stores state and functions for interacting with F1sh.
   */
  class F1sh {
-     public:
-     F1sh() {     // Constructor
-
-    }
-     void F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel);
-     void F1shInitSmartAP();
-     void F1shLoop();
-     void setGamepadCallback(GamepadCallback callback);
-     float mapFloat(float x, float in_min, float in_max, float out_min, float out_max);
+    private:
      struct Gamepad
      {
         float axis[4];
         float button[17];
      };
-     Gamepad gamepad[4];
-     private:
      void initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel);
      void initWiFiSmart();
      void initWebServer();
+     public:
+     F1sh() {     // Constructor
+
+        }
+     void F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel);
+     void F1shInitSmartAP();
+     void F1shLoop();
+     void setGamepadCallback(GamepadCallback callback);
+     float mapFloat(float x, float in_min, float in_max, float out_min, float out_max);
+     Gamepad gamepad[4];
  };
  #endif
