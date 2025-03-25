@@ -217,6 +217,6 @@ float F1sh::mapFloat(float x, float in_min, float in_max, float out_min, float o
 }
 
 void F1sh::F1shLoop() {
-     //ws.cleanupClients();
- }
+  Serial.println(ESP.getFreeHeap());
+}
  
