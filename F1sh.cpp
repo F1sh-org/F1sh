@@ -36,28 +36,7 @@ void F1sh::initWiFiAP(const char *ssid,const char *password,const char *hostname
      Serial.print("IP address: ");
      Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
  }
- 
-void F1sh::initWiFiSmart() {
-     WiFi.mode(WIFI_STA);
-     WiFi.beginSmartConfig();
-     //Wait for SmartConfig packet from mobile
-     Serial.println("Waiting for SmartConfig.");
-     while (!WiFi.smartConfigDone()) {
-         delay(500);
-         Serial.print(".");
-     }
-     Serial.println("");
-     Serial.println("SmartConfig received.");
-     //Wait for WiFi to connect to AP
-     Serial.println("Waiting for WiFi");
-     while (WiFi.status() != WL_CONNECTED) {
-         delay(500);
-         Serial.print(".");
-     }
-     Serial.println("WiFi Connected.");
-     Serial.print("IP address: ");
-     Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
- }
+
  
 void F1sh::initWebServer() {
     server.config.max_uri_handlers = 20;
@@ -118,63 +97,6 @@ void F1sh::initWebServer() {
       }
       return 0;
   });
-  /*
-    ws.onEvent([this](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
-       (void)len;
-      if (type == WS_EVT_DATA) {
-         AwsFrameInfo *info = (AwsFrameInfo *)arg;
-         // Serial.printf("index: %" PRIu64 ", len: %" PRIu64 ", final: %" PRIu8 ", opcode: %" PRIu8 "\n", info->index, info->len, info->final, info->opcode);
-         // String msg = "";
-         if (info->final && info->index == 0 && info->len == len) {
-           if (info->opcode == WS_TEXT) {
-             data[len] = 0;
-             //Serial.printf("ws text: %s\n", (char *)data);
-   
-             // Parse the JSON message
-             JsonDocument doc;
-             DeserializationError error = deserializeJson(doc, data);
-             if (error) {
-               Serial.print(F("deserializeJson() failed: "));
-               Serial.println(error.f_str());
-               return;
-             }
-   
-             // Extract data
-             if(!doc.isNull() && doc.is<JsonObject>()) {
-             if (!doc["action"].isNull()) {
-               if (doc["action"] == "gamepad")
-               {
-                 // Bind gamepad axes to the gamepad object
-                 for (size_t i = 0; i < doc["gamepad"].size(); i++) {
-                    copyArray(doc["gamepad"][i]["axes"],F1sh::gamepad[i].axis);
-                    //Serial.printf("Gamepad %d: %f %f %f %f\n",i,F1sh::gamepad[i].axis[0],F1sh::gamepad[i].axis[1],F1sh::gamepad[i].axis[2],F1sh::gamepad[i].axis[3]);
-                }
-                // Bind gamepad buttons to the gamepad object
-                for (size_t i = 0; i < doc["gamepad"].size(); i++) {
-                    copyArray(doc["gamepad"][i]["buttons"],F1sh::gamepad[i].button);
-                }
-                if (gamepadCallback)
-                {
-                  gamepadCallback();
-                }
-               }
-               if (doc["action"] == "reboot") {
-                 ESP.restart();
-               }
-               if (doc["action"] == "get") {
-                 // send available data
-                 JsonDocument res;
-                 res["action"] = "get";
-                 res["data"] = "ok";
-                 ws.text(client->id(), res.as<String>());
-               }
-             }
-            }
-           }
-         }
-       }
-     });
-     */
      server.on("/ws", &websocketHandler);
 }
 
@@ -197,20 +119,6 @@ void F1sh::F1shInitAP(const char *ssid,const char *password,const char *hostname
    #endif
     initWiFiAP(ssid,password,hostname,channel);
     initWebServer();
- }
- 
-/*!
- *  @brief  Start F1sh in SmartConfig mode
- */
-void F1sh::F1shInitSmartAP(){
-     Serial.println("Starting F1sh in SmartConfig mode");
-   #ifdef ESP32
-       LittleFS.begin(true);
-   #else
-       LittleFS.begin();
-   #endif
-       initWiFiSmart();
-       initWebServer();
  }
 
 /*!
