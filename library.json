@@ -25,17 +25,12 @@
     "headers": "F1sh.h",
     "dependencies": [
         {
-            "name": "ESPAsyncWebServer",
-            "version": "^3.7.2"
+            "name": "hoeken/PsychicHttp",
+            "version": "^1.2.1"
         },
         {
             "name": "ArduinoJson",
             "version": "~7.3.1"
-        },
-        {
-            "name": "AsyncTCP",
-            "version": "*",
-            "platforms": ["espressif32"]
         }
     ]
   }
