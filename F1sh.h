@@ -22,6 +22,7 @@
  #include <ArduinoJson.h>
  #include <PsychicHttp.h>
  #include <PsychicHttpsServer.h>
+ #include <ESPmDNS.h>
  
  extern PsychicHttpsServer server;
  extern PsychicWebSocketHandler websocketHandler;
@@ -41,6 +42,7 @@
      };
      void initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel);
      void initWebServer();
+     void start_mdns_service();
      public:
      F1sh() {     // Constructor
 

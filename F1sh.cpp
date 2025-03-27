@@ -37,7 +37,20 @@ void F1sh::initWiFiAP(const char *ssid,const char *password,const char *hostname
      Serial.println(WiFi.getMode() == WIFI_AP ? WiFi.softAPIP() : WiFi.localIP());
  }
 
- 
+void F1sh::start_mdns_service(){
+  //initialize mDNS service
+  esp_err_t err = mdns_init();
+  if (err) {
+      Serial.printf("MDNS Init failed: %d\n", err);
+      return;
+  }
+
+  //set hostname
+  mdns_service_add(NULL, "_http", "_tcp", 80, NULL, 0);
+  mdns_hostname_set("F1sh");
+  mdns_instance_name_set("F1sh Robot Controller");
+}
+
 void F1sh::initWebServer() {
     server.config.max_uri_handlers = 20;
     redirectServer->config.ctrl_port = 20420; // just a random port different from the default one
@@ -89,8 +102,14 @@ void F1sh::initWebServer() {
           if (doc["action"] == "get") {
             // send available data
             JsonDocument res;
-            res["action"] = "get";
-            res["data"] = "ok";
+            JsonDocument data;
+            data["freeHeap"] = ESP.getFreeHeap();
+            data["freePsram"] = ESP.getFreePsram();
+            data["cpuFreq"] = ESP.getCpuFreqMHz();
+            data["flashChipSize"] = ESP.getFlashChipSize();
+            data["flashChipSpeed"] = ESP.getFlashChipSpeed();
+            res["data"] = data;
+            Serial.println(res.as<String>());
             return request->reply(res.as<String>().c_str());
           }
         }
@@ -119,6 +138,7 @@ void F1sh::F1shInitAP(const char *ssid,const char *password,const char *hostname
    #endif
     initWiFiAP(ssid,password,hostname,channel);
     initWebServer();
+    start_mdns_service();
  }
 
 /*!
