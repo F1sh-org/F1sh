@@ -83,13 +83,13 @@ void F1sh::initWebServer() {
         if(!doc["action"].isNull() && !doc.isNull() && doc.is<JsonObject>()) {
           if (doc["action"] == "gamepad"){
             // Bind gamepad axes to the gamepad object
-            for (size_t i = 0; i < doc["gamepad"].size(); i++) {
-              copyArray(doc["gamepad"][i]["axes"],F1sh::gamepad[i].axis);
+            for (size_t i = 0; i < doc["data"].size(); i++) {
+              copyArray(doc["data"][i]["axes"],F1sh::gamepad[i].axis);
               //Serial.printf("Gamepad %d: %f %f %f %f\n",i,F1sh::gamepad[i].axis[0],F1sh::gamepad[i].axis[1],F1sh::gamepad[i].axis[2],F1sh::gamepad[i].axis[3]);
           }
           // Bind gamepad buttons to the gamepad object
-          for (size_t i = 0; i < doc["gamepad"].size(); i++) {
-              copyArray(doc["gamepad"][i]["buttons"],F1sh::gamepad[i].button);
+          for (size_t i = 0; i < doc["data"].size(); i++) {
+              copyArray(doc["data"][i]["buttons"],F1sh::gamepad[i].button);
           }
           if (gamepadCallback)
           {
