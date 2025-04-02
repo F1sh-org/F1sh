@@ -17,17 +17,16 @@
  #define _F1sh_H
  
  #include <Arduino.h>
- #include <ESPAsyncWebServer.h>
- #include <AsyncTCP.h>
  #include <WiFi.h>
  #include <LittleFS.h>
- #include "AsyncJson.h"
  #include <ArduinoJson.h>
+ #include <PsychicHttp.h>
+ #include <PsychicHttpsServer.h>
+ #include <ESPmDNS.h>
  
- 
- static AsyncWebServer server(80);
- static AsyncWebSocket ws("/ws");
- 
+ extern PsychicHttpsServer server;
+ extern PsychicWebSocketHandler websocketHandler;
+ extern PsychicHttpServer *redirectServer;
  typedef void (*GamepadCallback)();
  static GamepadCallback gamepadCallback = nullptr;
  
@@ -42,14 +41,13 @@
         float button[17];
      };
      void initWiFiAP(const char *ssid,const char *password,const char *hostname, int channel);
-     void initWiFiSmart();
      void initWebServer();
+     void start_mdns_service();
      public:
      F1sh() {     // Constructor
 
-        }
+      }
      void F1shInitAP(const char *ssid,const char *password,const char *hostname, int channel);
-     void F1shInitSmartAP();
      void F1shLoop();
      void setGamepadCallback(GamepadCallback callback);
      float mapFloat(float x, float in_min, float in_max, float out_min, float out_max);
