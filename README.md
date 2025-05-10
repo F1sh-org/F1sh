@@ -9,11 +9,7 @@ This is the library that can be used for controlling a robot using a web interfa
 
 This project were made possible using multiple open-source and community-driven library:
 
-[ESPAsyncWebServer](https://github.com/ESP32Async/ESPAsyncWebServer.git): LGPL-3.0 license
-
-[AsyncTCP](https://github.com/ESP32Async/AsyncTCP.git): LGPL-3.0 license
-
-[Adafruit PWM Servo Driver Library](https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library.git): BSD License
+[PsychicHttp](https://github.com/hoeken/PsychicHttp.git): MIT license
 
 [ArduinoJson](https://github.com/bblanchon/ArduinoJson.git): MIT license
 
