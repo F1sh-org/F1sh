@@ -19,7 +19,7 @@
     "email": "thaimeo200389@gmail.com",
     "url": "https://linktr.ee/b4iterdev"
     },
-    "license": "CC-BY-NC-4.0",
+    "license": "GPL-3.0",
     "frameworks": "arduino",
     "platforms": ["espressif32", "espressif8266"],
     "headers": "F1sh.h",

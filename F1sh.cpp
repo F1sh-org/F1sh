@@ -17,8 +17,9 @@
  *
  *  @section license License
  *
- *  Creative Commons Attribution-NonCommercial 4.0 International License.
+ *  GNU General Public License version 3.
  *  All text above must be included in any redistribution.
+ *
  */
 
 #include "F1sh.h"

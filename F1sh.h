@@ -5,10 +5,10 @@
  *
  *  The library is designed to work with the ESP32 and ESP8266 microcontrollers.
  *
- *  Released under the Creative Commons Attribution-NonCommercial 4.0 International License.
+ *  Released under the GNU General Public License version 3.
  *
- *  Created by B4iter (@b4iterdev).
- *  Stemist Club logo and all associated assets are property of Stemist Club. All rights reserved.
+ *  Created by B4iter (@b4iterdev) as the original creator. Maintained by F1sh-org.
+ *  F1sh logo and all associated assets are property of F1sh-org. All rights reserved.
  *  For more infomation on F1sh, please visit: https://github.com/F1sh-org/F1sh.git
  *  All text above must be included in any redistribution.
  */
