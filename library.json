@@ -23,6 +23,19 @@
     "frameworks": "arduino",
     "platforms": ["espressif32", "espressif8266"],
     "headers": "F1sh.h",
+    "examples": [
+    {
+        "name": "TankDrive",
+        "base": "examples/TankDrive",
+        "files": [
+            "platformio.ini",
+            "include/gamepadController.h",
+            "include/motor.h",
+            "src/main.cpp",
+            "README.md"
+        ]
+    }
+    ],
     "dependencies": [
         {
             "name": "hoeken/PsychicHttp",
