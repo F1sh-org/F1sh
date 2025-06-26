@@ -1,6 +1,5 @@
 # F1sh - Control a robot using a web interface.
 
-[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
 ## Introduction
 This is the library that can be used for controlling a robot using a web interface.
