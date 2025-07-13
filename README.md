@@ -1,5 +1,5 @@
 # F1sh - Control a robot using a web interface.
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/F1sh-org/F1sh-static)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/F1sh-org/F1sh)
 
 ## Introduction
 This is the library that can be used for controlling a robot using a web interface.
