@@ -60,6 +60,11 @@ void F1sh::initWebServer() {
       String url = "https://" + request->host() + request->url();
       return request->redirect(url.c_str());
     });
+    if(!LittleFS.begin())
+    {
+      Serial.println("LittleFS Mount Failed. Do Platform -> Build Filesystem Image and Platform -> Upload Filesystem Image from VSCode");
+      return;
+    }
     String cert = LittleFS.open("/server.crt","r",false).readString();
     String key = LittleFS.open("/server.key","r",false).readString();
     server.listen(443,cert.c_str(),key.c_str());
